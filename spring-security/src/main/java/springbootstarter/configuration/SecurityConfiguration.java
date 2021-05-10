@@ -17,13 +17,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 * secured - @Secured*/
 //@EnableGlobalMethodSecurity(jsr250Enabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private static final String ADMIN = "ADMIN";
+    private static final String USER = "USER";
+
    @Override
    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
        //set configuration on auth object
        auth.inMemoryAuthentication()
-               .withUser("user").password("user1234").roles("USER")
+               .withUser("user").password("user1234").roles(USER)
                .and()
-               .withUser("abc").password("abc123").roles("ADMIN");
+               .withUser("abc").password("abc123").roles(ADMIN);
    }
 
    @Bean
@@ -35,8 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
 //                .anyRequest().authenticated()       //anyRequest can not be configured with antMatchers
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("USER","ADMIN")
+                .antMatchers("/admin").hasRole(ADMIN)
+                .antMatchers("/user").hasAnyRole(USER,ADMIN)
                 .antMatchers("/").permitAll()
                 .and()
                 .formLogin();
